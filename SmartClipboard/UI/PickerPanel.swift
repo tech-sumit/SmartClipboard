@@ -5,11 +5,12 @@ import SwiftUI
 /// Floating, non-activating panel that hosts the SwiftUI picker.
 /// Non-activating so the previously-focused app keeps its keyboard focus
 /// (until we send ⌘V into it).
-final class PickerPanel {
+final class PickerPanel: NSObject, NSWindowDelegate {
     static let shared = PickerPanel()
 
     private var panel: NonActivatingPanel?
     private var savedFrontmostApp: NSRunningApplication?
+    private var ignoreNextResign = false
 
     func toggle() {
         if let p = panel, p.isVisible {
@@ -80,7 +81,20 @@ final class PickerPanel {
         p.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         p.backgroundColor = .windowBackgroundColor
         p.contentView = host
+        p.delegate = self
         panel = p
+    }
+
+    // MARK: NSWindowDelegate
+
+    /// Close the panel as soon as it loses key-window status —
+    /// i.e. the user clicked outside of it.
+    func windowDidResignKey(_ notification: Notification) {
+        guard !ignoreNextResign else {
+            ignoreNextResign = false
+            return
+        }
+        close()
     }
 }
 

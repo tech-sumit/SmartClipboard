@@ -75,54 +75,90 @@ final class ClipboardMonitor {
     private func readPasteboard() -> ClipItem? {
         let frontApp = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
         let now = Date()
+        let types = pasteboard.types ?? []
 
-        // File URLs first (Finder copies)
-        if let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL],
-           !urls.isEmpty,
-           urls.allSatisfy({ $0.isFileURL }) {
-            let strs = urls.map(\.absoluteString)
-            let json = (try? JSONEncoder().encode(strs))
-                .flatMap { String(data: $0, encoding: .utf8) } ?? "[]"
-            let preview = urls.map(\.lastPathComponent).joined(separator: ", ")
-            let textForSearch = urls.map(\.path).joined(separator: "\n")
-            return ClipItem(
-                id: nil,
-                contentType: .files,
-                textContent: textForSearch,
-                imageData: nil,
-                imageThumb: nil,
-                fileUrls: json,
-                preview: String(preview.prefix(200)),
-                byteSize: json.utf8.count,
-                sourceApp: frontApp,
-                isStarred: false,
-                createdAt: now
-            )
+        // 1. File URLs (strictly file://, so we don't grab http URLs from a browser image copy)
+        if types.contains(.fileURL) {
+            if let urls = pasteboard.readObjects(
+                forClasses: [NSURL.self],
+                options: [.urlReadingFileURLsOnly: true]
+            ) as? [URL], !urls.isEmpty {
+                let strs = urls.map(\.absoluteString)
+                let json = (try? JSONEncoder().encode(strs))
+                    .flatMap { String(data: $0, encoding: .utf8) } ?? "[]"
+                let preview = urls.map(\.lastPathComponent).joined(separator: ", ")
+                let textForSearch = urls.map(\.path).joined(separator: "\n")
+                return ClipItem(
+                    id: nil,
+                    contentType: .files,
+                    textContent: textForSearch,
+                    imageData: nil,
+                    imageThumb: nil,
+                    fileUrls: json,
+                    preview: String(preview.prefix(200)),
+                    byteSize: json.utf8.count,
+                    sourceApp: frontApp,
+                    isStarred: false,
+                    createdAt: now
+                )
+            }
         }
 
-        // Image
-        if let img = NSImage(pasteboard: pasteboard),
-           let tiff = img.tiffRepresentation,
-           let rep = NSBitmapImageRep(data: tiff),
-           let png = rep.representation(using: .png, properties: [:]) {
-            let thumb = Self.makeThumbnail(image: img, maxDim: 64)
-            let size = "\(Int(img.size.width))×\(Int(img.size.height))"
-            return ClipItem(
-                id: nil,
-                contentType: .image,
-                textContent: nil,
-                imageData: png,
-                imageThumb: thumb,
-                fileUrls: nil,
-                preview: "Image \(size)",
-                byteSize: png.count,
-                sourceApp: frontApp,
-                isStarred: false,
-                createdAt: now
-            )
+        // 2. Image — try every known image UTI in priority order.
+        let imageTypes: [NSPasteboard.PasteboardType] = [
+            .png,
+            .tiff,
+            NSPasteboard.PasteboardType("public.png"),
+            NSPasteboard.PasteboardType("public.jpeg"),
+            NSPasteboard.PasteboardType("com.compuserve.gif"),
+            NSPasteboard.PasteboardType("public.heic"),
+            NSPasteboard.PasteboardType("public.image")
+        ]
+        if let imageType = pasteboard.availableType(from: imageTypes),
+           let rawData = pasteboard.data(forType: imageType),
+           !rawData.isEmpty {
+            // Re-encode to PNG so storage + thumbnails are predictable.
+            let pngData: Data?
+            let displayImg: NSImage?
+            if imageType == .png || imageType.rawValue == "public.png" {
+                pngData = rawData
+                displayImg = NSImage(data: rawData)
+            } else if let img = NSImage(data: rawData) {
+                displayImg = img
+                if let tiff = img.tiffRepresentation,
+                   let rep = NSBitmapImageRep(data: tiff) {
+                    pngData = rep.representation(using: .png, properties: [:])
+                } else {
+                    pngData = rawData  // fall back to original bytes
+                }
+            } else {
+                pngData = nil
+                displayImg = nil
+            }
+
+            if let png = pngData, let img = displayImg {
+                let thumb = Self.makeThumbnail(image: img, maxDim: 64)
+                let w = Int(img.size.width)
+                let h = Int(img.size.height)
+                let dims = (w > 0 && h > 0) ? "\(w)×\(h)" : "?"
+                NSLog("SmartClipboard: captured image \(dims) from type \(imageType.rawValue), \(png.count) bytes")
+                return ClipItem(
+                    id: nil,
+                    contentType: .image,
+                    textContent: nil,
+                    imageData: png,
+                    imageThumb: thumb,
+                    fileUrls: nil,
+                    preview: "Image \(dims)",
+                    byteSize: png.count,
+                    sourceApp: frontApp,
+                    isStarred: false,
+                    createdAt: now
+                )
+            }
         }
 
-        // Text
+        // 3. Text (last resort — image+text combos prefer image above)
         if let str = pasteboard.string(forType: .string), !str.isEmpty {
             let preview = String(str.prefix(200)).replacingOccurrences(of: "\n", with: " ⏎ ")
             return ClipItem(
@@ -140,6 +176,7 @@ final class ClipboardMonitor {
             )
         }
 
+        NSLog("SmartClipboard: unrecognized pasteboard, types=\(types.map(\.rawValue))")
         return nil
     }
 
