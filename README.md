@@ -59,7 +59,7 @@ Downloads the latest DMG, copies the app to `/Applications`, removes the macOS q
      ```
 4. Look for the clipboard glyph in your menu bar.
 
-> **Why the friction?** Apple requires a paid Apple Developer Program membership ($99/year) plus notarization for a frictionless install. The v0.1.0 DMG is ad-hoc signed only. Notarized release is on the [roadmap](#roadmap-v2-ideas).
+> **Why the friction?** Apple requires a paid Apple Developer Program membership ($99/year) plus notarization for a frictionless install. The current release DMG is ad-hoc signed only. Notarized release is on the [roadmap](#roadmap-v2-ideas).
 
 ### Build from source
 
