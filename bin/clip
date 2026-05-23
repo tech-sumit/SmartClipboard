@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+# Smart Clipboard CLI — thin wrapper that drives the main app via
+# the smartclipboard:// URL scheme. The Mac app must already be running.
+#
+# Usage:
+#   clip                 Open the picker.
+#   clip list            Print the most recent items (numbered).
+#   clip search QUERY    Print items matching QUERY.
+#   clip N               Paste the Nth item from the most recent (1-based).
+#   clip id ID           Paste the item with the given database id.
+#   clip copy N          Copy the Nth item to the clipboard without pasting.
+#
+# Exit codes: 0 on success, non-zero if the app didn't respond.
+
+set -euo pipefail
+
+URL_SCHEME="smartclipboard"
+APP_NAME="SmartClipboard"
+TIMEOUT_S=2
+
+die() { echo "clip: $*" >&2; exit 1; }
+
+ensure_running() {
+    if ! pgrep -x "${APP_NAME}" >/dev/null 2>&1; then
+        die "${APP_NAME}.app is not running. Launch it first."
+    fi
+}
+
+open_url() {
+    /usr/bin/open -g "$1" || die "failed to send URL: $1"
+}
+
+list_to_temp() {
+    local q="${1:-}"
+    local out
+    out="$(mktemp -t clip-list).txt"
+    rm -f "$out"
+    if [[ -z "$q" ]]; then
+        open_url "${URL_SCHEME}://list?out=$(urlencode "$out")"
+    else
+        open_url "${URL_SCHEME}://search?q=$(urlencode "$q")&out=$(urlencode "$out")"
+    fi
+    # Wait for the file (up to TIMEOUT_S)
+    local waited=0
+    while [[ ! -s "$out" ]]; do
+        sleep 0.05
+        waited=$((waited + 1))
+        if (( waited > TIMEOUT_S * 20 )); then
+            die "timed out waiting for app response"
+        fi
+    done
+    cat "$out"
+    rm -f "$out"
+}
+
+urlencode() {
+    # python3 is everywhere on macOS
+    python3 -c "import sys,urllib.parse;print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"
+}
+
+cmd="${1:-show}"
+case "$cmd" in
+    "" | show)
+        ensure_running
+        open_url "${URL_SCHEME}://show"
+        ;;
+    list)
+        ensure_running
+        list_to_temp ""
+        ;;
+    search)
+        shift
+        [[ $# -ge 1 ]] || die "usage: clip search QUERY"
+        ensure_running
+        list_to_temp "$*"
+        ;;
+    id)
+        shift
+        [[ $# -eq 1 ]] || die "usage: clip id ID"
+        ensure_running
+        open_url "${URL_SCHEME}://paste?id=$1"
+        ;;
+    copy)
+        shift
+        [[ $# -eq 1 ]] || die "usage: clip copy N"
+        ensure_running
+        # Resolve N -> id via list output (column 2 is id)
+        n="$1"
+        line="$(list_to_temp "" | awk -v n="$n" -F'\t' '$1==n {print $2}')"
+        [[ -n "$line" ]] || die "no item #$n"
+        open_url "${URL_SCHEME}://copy?id=$line"
+        ;;
+    help | -h | --help)
+        sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'
+        ;;
+    *)
+        # Numeric: paste Nth item
+        if [[ "$cmd" =~ ^[0-9]+$ ]]; then
+            ensure_running
+            line="$(list_to_temp "" | awk -v n="$cmd" -F'\t' '$1==n {print $2}')"
+            [[ -n "$line" ]] || die "no item #$cmd"
+            open_url "${URL_SCHEME}://paste?id=$line"
+        else
+            die "unknown command: $cmd (try \`clip help\`)"
+        fi
+        ;;
+esac

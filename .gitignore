@@ -1,0 +1,37 @@
+# Xcode
+.build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xcuserdatad/
+project.xcworkspace/
+xcshareddata/
+*.xcsettings
+build/
+
+# Generated project (xcodegen rebuilds it)
+SmartClipboard.xcodeproj/
+
+# Swift package
+Packages/
+.swiftpm/
+Package.resolved
+
+# DMG staging
+.dmg-staging/
+dist/
+
+# Generated iconset PNGs (kept icns + svg in repo)
+assets/AppIcon.iconset/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
