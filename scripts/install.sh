@@ -43,9 +43,10 @@ info "Downloading…"
 curl -fL --progress-bar "$ASSET_URL" -o "$DMG"
 
 info "Mounting DMG"
-MOUNT=$(hdiutil attach "$DMG" -nobrowse -quiet \
-    | tail -1 | awk '{ for (i=3; i<=NF; i++) printf "%s%s", $i, (i==NF ? ORS : OFS) }' \
-    | sed 's/[[:space:]]*$//')
+ATTACH_OUTPUT=$(hdiutil attach "$DMG" -nobrowse -noautoopen 2>&1) \
+    || err "hdiutil attach failed:\n${ATTACH_OUTPUT}"
+MOUNT=$(printf '%s\n' "$ATTACH_OUTPUT" | grep -o '/Volumes/.*' | tail -1)
+[[ -n "$MOUNT" ]] || err "Could not parse mount path from hdiutil output:\n${ATTACH_OUTPUT}"
 [[ -d "$MOUNT/$APP_NAME" ]] || err "Mounted DMG does not contain $APP_NAME (mount: $MOUNT)"
 
 if [[ -d "$APP_PATH" ]]; then
