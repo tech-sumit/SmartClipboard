@@ -37,12 +37,29 @@ The system clipboard holds one thing. Smart Clipboard remembers everything you'v
 
 ## Install
 
-### From DMG (recommended)
+### One-line install (recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/tech-sumit/SmartClipboard/main/scripts/install.sh | bash
+```
+
+Downloads the latest DMG, copies the app to `/Applications`, removes the macOS quarantine flag, and launches it. No Gatekeeper dialog.
+
+### Manual DMG install
 
 1. Download `SmartClipboard-x.y.z.dmg` from the [latest release](https://github.com/tech-sumit/SmartClipboard/releases/latest).
-2. Open the DMG; drag **Smart Clipboard** into **Applications**.
-3. First launch: **right-click the app → Open** (the DMG is ad-hoc signed; Gatekeeper will refuse a normal double-click).
+2. Open the DMG and drag **Smart Clipboard** into the **Applications** shortcut.
+3. **First launch** — because the DMG is ad-hoc signed (no Apple Developer ID notarization), macOS Gatekeeper will say _"Apple could not verify Smart Clipboard is free of malware"_. To bypass:
+   - **macOS 14 Sonoma or earlier:** right-click the app in `/Applications` → **Open** → **Open** in the dialog.
+   - **macOS 15 Sequoia and later:** double-click (you'll get the warning), then go to **System Settings → Privacy & Security → scroll to "Smart Clipboard was blocked" → Open Anyway**, enter your password.
+   - **Or from a terminal** (any macOS version):
+     ```bash
+     xattr -dr com.apple.quarantine /Applications/SmartClipboard.app
+     open /Applications/SmartClipboard.app
+     ```
 4. Look for the clipboard glyph in your menu bar.
+
+> **Why the friction?** Apple requires a paid Apple Developer Program membership ($99/year) plus notarization for a frictionless install. The v0.1.0 DMG is ad-hoc signed only. Notarized release is on the [roadmap](#roadmap-v2-ideas).
 
 ### Build from source
 
@@ -167,34 +184,88 @@ Install from **Settings → CLI → Install** (symlinks to `/usr/local/bin/clip`
 
 ## How it works
 
+### Architecture
+
+```mermaid
+flowchart LR
+    classDef ext fill:#f4f4f8,stroke:#999,stroke-dasharray:3 3,color:#222
+    classDef core fill:#eef0ff,stroke:#5E63FF,color:#1d1d1f
+    classDef store fill:#dde0ff,stroke:#3437C9,stroke-width:2px,color:#1d1d1f
+
+    PB["NSPasteboard<br/>(system clipboard)"]:::ext
+    KEY["⌘⇧V hotkey"]:::ext
+    CLI["clip CLI"]:::ext
+    SI["NSStatusItem<br/>(menu bar)"]:::ext
+    APP["Focused app"]:::ext
+    DB[("SQLite + FTS5<br/>~/Library/Application Support/")]:::ext
+    CLOUD[("Folder<br/>iCloud / Dropbox / Drive")]:::ext
+
+    subgraph SC ["SmartClipboard.app — single process, LSUIElement"]
+        CM["ClipboardMonitor<br/>0.5s poll"]:::core
+        HM["HotkeyManager<br/>Carbon RegisterEventHotKey"]:::core
+        UH["URLSchemeHandler<br/>smartclipboard://..."]:::core
+        MC["MenuBarController<br/>NSMenu rendering"]:::core
+        PP["PickerPanel<br/>non-activating NSPanel"]:::core
+        PA["Paster<br/>CGEventPost ⌘V"]:::core
+        BM["BackupManager<br/>streamed JSON"]:::core
+        CR{{"ClipRepository<br/>CRUD + dedup + FTS5"}}:::store
+    end
+
+    PB -- "poll changeCount" --> CM --> CR
+    KEY --> HM --> PP --> CR
+    CLI -- "open URL" --> UH --> CR
+    SI --> MC --> CR
+    PP --> PA --> APP
+    CR <--> DB
+    CR --> BM --> CLOUD
 ```
-                    ┌────────────────────────────────────┐
-                    │           SmartClipboard.app       │
-                    │  (LSUIElement, single process)     │
-                    │                                    │
-NSPasteboard ──poll──▶ ClipboardMonitor                  │
-                    │       │                            │
-                    │       ▼                            │
-                    │  ClipRepository ──▶ GRDB ──▶ SQLite│
-                    │       ▲                  + FTS5    │
-   ⌘⇧V  ──Carbon───▶ HotkeyManager ──▶ PickerPanel       │
-                    │                       │            │
-   clip CLI ──URL──▶ URLSchemeHandler ──────┘            │
-                    │                                    │
-                    │  MenuBarController ◀── NSStatusItem│
-                    │                                    │
-                    │  Paster ──CGEventPost──▶ ⌘V into   │
-                    │                          focused app│
-                    │                                    │
-                    │  BackupManager ──streamed JSON──▶  │
-                    │                       chosen folder│
-                    └────────────────────────────────────┘
+
+### Capture-and-paste flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as You
+    participant SP as System Pasteboard
+    participant CM as ClipboardMonitor
+    participant DB as SQLite + FTS5
+    participant HK as HotkeyManager
+    participant PP as PickerPanel
+    participant PR as Paster
+    participant App as Focused app
+
+    rect rgba(94,99,255,0.08)
+    Note over U,App: Capture (continuous)
+    U->>SP: ⌘C (copy)
+    CM->>SP: poll every 500 ms
+    CM->>CM: payload != self-write fingerprint?
+    CM->>DB: INSERT (dedup against latest row)
+    end
+
+    rect rgba(94,99,255,0.08)
+    Note over U,App: Recall + paste
+    U->>HK: ⌘⇧V
+    HK->>PP: show() — capture frontmost app
+    PP->>DB: FTS5 search as you type
+    DB-->>PP: matching ClipItems
+    U->>PP: ↩ on item
+    PP->>PR: restoreAndPaste(item, activating: App)
+    PR->>CM: mark own write (fingerprint)
+    PR->>SP: clearContents + setString/Image
+    PR->>App: activate
+    Note over PR,App: poll isActive up to 200 ms
+    PR->>App: CGEventPost ⌘V
+    App->>SP: read content
+    end
 ```
+
+### Implementation notes
 
 - **Storage:** `~/Library/Application Support/SmartClipboard/clipboard.sqlite` (single file, WAL-mode SQLite + FTS5 virtual table).
 - **Dedup:** identical-to-previous payload bumps `created_at` instead of inserting.
 - **Self-write suppression:** when we restore an item, the monitor records a fingerprint and skips it on the next poll.
-- **No daemon:** the `clip` CLI calls `open smartclipboard://...` — the running app handles the URL.
+- **No daemon:** the `clip` CLI calls `open smartclipboard://...` — the running app handles the URL via `NSApplicationDelegate.application(_:open:)`.
+- **Streamed backup:** auto-export reads rows 50 at a time and writes incrementally to a temp file, then atomically renames — peak memory stays small even with thousands of multi-MB images.
 
 ---
 

@@ -156,6 +156,14 @@
         <h2>Up and running in 60 seconds.</h2>
         <p class="section-lede">Download the DMG, drag to Applications, grant two permissions. That's it.</p>
 
+        <h3 style="margin-top: 0; font-size: 22px;">Option A — one-line installer (recommended)</h3>
+        <p style="color: var(--muted); margin: 0 0 14px;">Downloads the latest DMG, copies the app into <code>/Applications</code>, removes the macOS quarantine flag, and launches it. No Gatekeeper dialog.</p>
+        <div class="copyable">
+<pre><code>curl -fsSL https://raw.githubusercontent.com/tech-sumit/SmartClipboard/main/scripts/install.sh | bash</code></pre>
+        </div>
+
+        <h3 style="margin-top: 48px; font-size: 22px;">Option B — manual DMG install</h3>
+
         <div class="steps">
             <div class="step">
                 <h3>Download the DMG</h3>
@@ -168,13 +176,25 @@
                 <p>Open the DMG and drag <strong>Smart Clipboard</strong> into the <strong>Applications</strong> shortcut.</p>
             </div>
             <div class="step">
-                <h3>First-launch open</h3>
-                <p>Right-click the app → <strong>Open</strong>. macOS Gatekeeper will refuse a normal double-click because the DMG is ad-hoc signed.</p>
+                <h3>Bypass Gatekeeper</h3>
+                <p>Because the DMG isn't notarized, macOS shows <em>"Apple could not verify…"</em> on first launch. See the box below for the bypass on your macOS version.</p>
             </div>
         </div>
 
         <div class="callout callout-warn" style="margin-top: 32px;">
-            <strong>Why the right-click?</strong> The release DMG is signed with an ad-hoc identity, not a paid Apple Developer ID. Right-click → Open tells Gatekeeper you trust the app explicitly; macOS then remembers your choice and you can launch it normally afterwards.
+            <strong>The "Apple could not verify…" warning — how to bypass:</strong>
+            <ul style="margin: 10px 0 0; padding-left: 18px;">
+                <li><strong>macOS 14 Sonoma or earlier:</strong> right-click the app in <code>/Applications</code> → <strong>Open</strong> → <strong>Open</strong> in the dialog.</li>
+                <li><strong>macOS 15 Sequoia or later:</strong> double-click (you'll get the warning), then open <strong>System Settings → Privacy &amp; Security</strong>, scroll to the <em>"Smart Clipboard was blocked"</em> banner, click <strong>Open Anyway</strong>, enter your password.</li>
+                <li><strong>From a terminal (any macOS version):</strong>
+<pre style="margin-top: 8px;"><code>xattr -dr com.apple.quarantine /Applications/SmartClipboard.app
+open /Applications/SmartClipboard.app</code></pre>
+                </li>
+            </ul>
+        </div>
+
+        <div class="callout" style="margin-top: 16px;">
+            <strong>Why the friction?</strong> Apple requires a paid Apple Developer Program membership ($99/year) plus notarization for a frictionless install. The v0.1.0 DMG is ad-hoc signed only — a notarized release is on the <a href="#roadmap">roadmap</a>.
         </div>
 
         <h3 style="margin-top: 56px; font-size: 22px;">…or build from source</h3>
@@ -463,8 +483,11 @@ open /Applications/SmartClipboard.app</code></pre>
         <h2>Frequently asked.</h2>
 
         <details>
-            <summary>Why does macOS warn me when I open the DMG?</summary>
-            <p>The release DMG is signed with an ad-hoc identity, not an Apple Developer ID. Gatekeeper refuses unsigned/ad-hoc apps on a normal double-click. Right-click the app in <em>Applications</em> and choose <strong>Open</strong> — macOS will ask once, then remember your choice for every future launch. (A future release with a paid Developer ID will let you skip this step.)</p>
+            <summary>Why does macOS say "Apple could not verify Smart Clipboard is free of malware"?</summary>
+            <p>The release DMG is signed with an ad-hoc identity, not an Apple Developer ID + notarization. macOS Gatekeeper refuses unnotarized apps on first launch.</p>
+            <p><strong>The easy fix</strong> — use the one-line installer at the top of <a href="#install">Install</a>; it removes the quarantine flag for you.</p>
+            <p><strong>Manual bypass</strong> — on macOS 14 Sonoma, right-click → Open. On macOS 15 Sequoia, you have to go to <em>System Settings → Privacy &amp; Security</em> and click <strong>Open Anyway</strong>. From the terminal: <code>xattr -dr com.apple.quarantine /Applications/SmartClipboard.app</code> works on every version.</p>
+            <p>A notarized DMG (no warning at all) is on the roadmap and requires a paid Apple Developer Program membership.</p>
         </details>
         <details>
             <summary>How do I get the picker on top of my full-screen app?</summary>
