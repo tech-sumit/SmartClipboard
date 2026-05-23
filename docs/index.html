@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Smart Clipboard — Native macOS clipboard manager</title>
+<meta name="description" content="A native macOS menu-bar clipboard manager. SQLite history of every text, image, and file you copy. Global hotkey picker, clip CLI, folder-based cloud backup. Free and open source."/>
+
+<meta property="og:title" content="Smart Clipboard"/>
+<meta property="og:description" content="Native macOS menu-bar clipboard manager with SQLite history, global hotkey picker, and a clip CLI. Free & open source."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://tech-sumit.github.io/SmartClipboard/"/>
+<meta property="og:image" content="https://tech-sumit.github.io/SmartClipboard/assets/icon-512.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="theme-color" content="#5E63FF"/>
+
+<link rel="icon" type="image/png" sizes="128x128" href="assets/icon-128.png"/>
+<link rel="apple-touch-icon" href="assets/icon-512.png"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <a class="brand-mark" href="#top">
+            <img src="assets/icon-128.png" alt=""/>
+            Smart Clipboard
+        </a>
+        <nav class="nav">
+            <a class="nav-link" href="#features">Features</a>
+            <a class="nav-link" href="#install">Install</a>
+            <a class="nav-link" href="#usage">Usage</a>
+            <a class="nav-link" href="#how">How it works</a>
+            <a class="nav-link" href="#faq">FAQ</a>
+            <a class="nav-cta" href="https://github.com/tech-sumit/SmartClipboard" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+    </div>
+</header>
+
+<a id="top"></a>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+    <div class="hero-inner">
+        <img class="hero-icon" src="assets/icon-512.png" alt="Smart Clipboard"/>
+        <h1>Every paste, never lost.</h1>
+        <p class="tagline">
+            A native macOS menu-bar clipboard manager. Records every text, image, and file
+            you copy into a local SQLite database — re-paste any of them with a hotkey, a
+            click, or a terminal command.
+        </p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" data-download
+               href="https://github.com/tech-sumit/SmartClipboard/releases/latest">
+                ⬇  Download for macOS
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/tech-sumit/SmartClipboard" target="_blank" rel="noopener">
+                View on GitHub  →
+            </a>
+        </div>
+        <div class="hero-meta">
+            <span>macOS 13.0+</span>
+            <span>Apple Silicon &amp; Intel</span>
+            <span>~5 MB · Open source · MIT</span>
+            <span>Latest: <code id="latest-version">v0.1.0</code></span>
+        </div>
+    </div>
+</section>
+
+<!-- ============== MOCKUP GALLERY ============== -->
+<section class="gallery">
+    <div class="gallery-inner">
+        <div class="tabs" data-target="#mockups">
+            <button class="tab is-active" type="button">Menu bar</button>
+            <button class="tab" type="button">Picker</button>
+            <button class="tab" type="button">Settings</button>
+            <button class="tab" type="button">Architecture</button>
+        </div>
+        <div id="mockups">
+            <div class="mockup-panel is-active">
+                <div class="mockup-frame"><img src="assets/mockup-menubar.svg" alt="Menu bar dropdown showing starred and recent clipboard items"/></div>
+                <p class="mockup-caption">Status-item dropdown with starred items, recent items (top 9 get ⌘1–⌘9), and image thumbnails inline.</p>
+            </div>
+            <div class="mockup-panel">
+                <div class="mockup-frame"><img src="assets/mockup-picker.svg" alt="Global hotkey picker with search and keyboard-navigable list"/></div>
+                <p class="mockup-caption">Press <kbd>⌘⇧V</kbd> anywhere to open the picker. Type to search (SQLite FTS5), arrows to navigate, Enter to paste.</p>
+            </div>
+            <div class="mockup-panel">
+                <div class="mockup-frame"><img src="assets/mockup-settings.svg" alt="Settings window showing hotkey, menu, backup and permissions sections"/></div>
+                <p class="mockup-caption">Rebind the hotkey, choose a backup folder (point at iCloud / Dropbox / Drive), check permission status, and install the CLI from one place.</p>
+            </div>
+            <div class="mockup-panel">
+                <div class="mockup-frame"><img src="assets/diagram-architecture.svg" alt="Architecture diagram of the Smart Clipboard app"/></div>
+                <p class="mockup-caption">One Swift process. Pasteboard polling + Carbon hotkey + URL-scheme CLI all feed a single GRDB-backed SQLite store.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============== FEATURES ============== -->
+<section class="section" id="features">
+    <div class="section-inner">
+        <div class="eyebrow">Features</div>
+        <h2>Built like a Mac app should be.</h2>
+        <p class="section-lede">Tiny binary, native widgets, no Electron, no background daemon, no telemetry. Everything stays on your machine.</p>
+
+        <div class="feature-grid">
+            <div class="feature">
+                <div class="feature-icon">📋</div>
+                <h3>Every clipboard change, captured</h3>
+                <p>Polls <code>NSPasteboard</code> every 500&nbsp;ms. Captures plain text, images (PNG-encoded with thumbnails), and Finder file references.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔍</div>
+                <h3>Instant full-text search</h3>
+                <p>SQLite FTS5 virtual table indexes every text snippet and file path. Search-as-you-type stays fast with thousands of entries.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⌨️</div>
+                <h3>Global hotkey picker</h3>
+                <p>Default <kbd>⌘⇧V</kbd> (rebindable). Spotlight-style search; <kbd>↩</kbd> pastes into the previously focused app, <kbd>⌥↩</kbd> copies only.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⭐</div>
+                <h3>Star items to keep forever</h3>
+                <p>Starred entries appear in their own menu-bar section. They're excluded from any clear-history operation.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🖥</div>
+                <h3><code>clip</code> CLI for terminal use</h3>
+                <p><code>clip list</code>, <code>clip search foo</code>, <code>clip 3</code> to paste the 3rd item. Implemented via the <code>smartclipboard://</code> URL scheme — no extra daemon.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">☁️</div>
+                <h3>Cloud backup by folder</h3>
+                <p>Point the streamed JSON export at <em>any</em> folder. Pick one inside iCloud Drive, Dropbox, or Google Drive for free cloud sync.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🪶</div>
+                <h3>5&nbsp;MB and single-process</h3>
+                <p>Native Swift/SwiftUI, no helper daemons, no menu-bar swarm. Storage is a single SQLite file you can back up with <code>cp</code>.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔓</div>
+                <h3>Open source · MIT</h3>
+                <p>Every line of code is in the repo. Build from source yourself, or download the signed DMG release.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============== INSTALL ============== -->
+<section class="section" id="install" style="background: var(--surface-2);">
+    <div class="section-inner">
+        <div class="eyebrow">Installation</div>
+        <h2>Up and running in 60 seconds.</h2>
+        <p class="section-lede">Download the DMG, drag to Applications, grant two permissions. That's it.</p>
+
+        <div class="steps">
+            <div class="step">
+                <h3>Download the DMG</h3>
+                <p>Grab <code>SmartClipboard-x.y.z.dmg</code> from the latest release on GitHub.</p>
+                <a class="btn btn-primary" data-download style="margin-top: 14px;"
+                   href="https://github.com/tech-sumit/SmartClipboard/releases/latest">⬇  Get latest release</a>
+            </div>
+            <div class="step">
+                <h3>Drag to Applications</h3>
+                <p>Open the DMG and drag <strong>Smart Clipboard</strong> into the <strong>Applications</strong> shortcut.</p>
+            </div>
+            <div class="step">
+                <h3>First-launch open</h3>
+                <p>Right-click the app → <strong>Open</strong>. macOS Gatekeeper will refuse a normal double-click because the DMG is ad-hoc signed.</p>
+            </div>
+        </div>
+
+        <div class="callout callout-warn" style="margin-top: 32px;">
+            <strong>Why the right-click?</strong> The release DMG is signed with an ad-hoc identity, not a paid Apple Developer ID. Right-click → Open tells Gatekeeper you trust the app explicitly; macOS then remembers your choice and you can launch it normally afterwards.
+        </div>
+
+        <h3 style="margin-top: 56px; font-size: 22px;">…or build from source</h3>
+        <p style="color: var(--muted); margin: 6px 0 16px;">You'll need Xcode 14+ and <a href="https://github.com/yonaskolb/XcodeGen" target="_blank" rel="noopener">XcodeGen</a>.</p>
+
+        <div class="copyable">
+<pre><code><span class="tok-cmt"># clone, generate the Xcode project, open in Xcode</span>
+brew install xcodegen
+git clone https://github.com/tech-sumit/SmartClipboard.git
+cd SmartClipboard
+xcodegen generate
+open SmartClipboard.xcodeproj   <span class="tok-cmt"># then ⌘R</span></code></pre>
+        </div>
+
+        <p style="color: var(--muted); margin: 24px 0 8px;">Or fully from the command line:</p>
+        <div class="copyable">
+<pre><code>xcodebuild -project SmartClipboard.xcodeproj \
+           -scheme SmartClipboard \
+           -configuration Release \
+           -derivedDataPath .build build
+
+cp -R .build/Build/Products/Release/SmartClipboard.app /Applications/
+open /Applications/SmartClipboard.app</code></pre>
+        </div>
+    </div>
+</section>
+
+<!-- ============== PERMISSIONS ============== -->
+<section class="section" id="permissions">
+    <div class="section-inner">
+        <div class="eyebrow">Permissions</div>
+        <h2>Two prompts. No surprises.</h2>
+        <p class="section-lede">Smart Clipboard asks for exactly what it needs, and the picker still works (partially) if you say no.</p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Permission</th><th>Used for</th><th>When you'll see the prompt</th><th>If you deny</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Accessibility</strong></td>
+                        <td>Synthesizes <kbd>⌘V</kbd> into the focused app when you press Enter in the picker. Uses <code>CGEventPost</code>.</td>
+                        <td>You click <em>Request</em> in <em>Settings → Permissions</em>, or paste-on-Enter is attempted for the first time.</td>
+                        <td>The picker still restores items to the clipboard — you press <kbd>⌘V</kbd> yourself.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Input Monitoring</strong></td>
+                        <td>The global <kbd>⌘⇧V</kbd> hotkey. Uses Carbon's <code>RegisterEventHotKey</code>.</td>
+                        <td>First time the hotkey fires after launch.</td>
+                        <td>The hotkey won't fire; menu bar and CLI still work fully.</td>
+                    </tr>
+                    <tr>
+                        <td>No <em>Full Disk Access</em></td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>Not requested. The app only reads/writes its own Application Support folder.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="callout">
+            <strong>Where the prompts live afterwards:</strong>
+            <em>System Settings → Privacy &amp; Security → Accessibility</em> and <em>… → Input Monitoring</em>.
+            Smart Clipboard will appear in both lists; toggle it on or off any time.
+        </div>
+    </div>
+</section>
+
+<!-- ============== USAGE ============== -->
+<section class="section" id="usage" style="background: var(--surface-2);">
+    <div class="section-inner">
+        <div class="eyebrow">Usage</div>
+        <h2>Three ways to paste.</h2>
+        <p class="section-lede">Click the menu bar, press a hotkey, or use the CLI. Same database under the hood.</p>
+
+        <div class="two-col">
+            <div>
+                <h3 style="font-size: 18px; margin: 0 0 8px;">From the menu bar</h3>
+                <p style="color: var(--muted); margin: 0 0 14px;">
+                    Click the clipboard glyph in the menu bar to see starred items (always pinned)
+                    and the most recent items. Clicking an item restores it to the clipboard
+                    <em>and</em> pastes it into the app you were just using.
+                </p>
+                <ul style="color: var(--muted); padding-left: 18px;">
+                    <li><strong>Click</strong> — restore + paste into previous app.</li>
+                    <li><strong>Option-click</strong> — restore only, you press <kbd>⌘V</kbd>.</li>
+                    <li><strong>⌘1 … ⌘9</strong> inside the open menu — quick-paste top 9.</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="font-size: 18px; margin: 0 0 8px;">From the hotkey picker</h3>
+                <p style="color: var(--muted); margin: 0 0 14px;">
+                    Press <kbd>⌘⇧V</kbd> anywhere. A floating non-activating panel appears with
+                    a search field. The app you came from <em>keeps</em> keyboard focus, so when
+                    you press Enter the paste lands in the right place.
+                </p>
+                <ul style="color: var(--muted); padding-left: 18px;">
+                    <li><kbd>↑</kbd> <kbd>↓</kbd> — navigate</li>
+                    <li><kbd>↩</kbd> — restore + paste · <kbd>⌥↩</kbd> — copy only</li>
+                    <li><kbd>⌘F</kbd> — star/unstar · <kbd>⌘⌫</kbd> — delete</li>
+                    <li><kbd>⎋</kbd> — close picker</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 style="font-size: 20px; margin: 56px 0 16px;">From the terminal — <code>clip</code></h3>
+        <p style="color: var(--muted); margin: 0 0 16px;">
+            Install the CLI from <em>Settings → CLI → Install</em>. It creates a symlink at
+            <code>/usr/local/bin/clip</code> (or <code>~/bin/clip</code> if the former isn't writable).
+        </p>
+        <div class="cli-demo">
+<span class="tok-prompt">$</span> clip list<br/>
+<span class="tok-out">1  42  ★  TODO: refactor auth module</span><br/>
+<span class="tok-out">2  41     git rebase -i HEAD~5</span><br/>
+<span class="tok-out">3  39     https://news.ycombinator.com/item?id=…</span><br/>
+<span class="tok-out">4  38     npm run dev</span><br/>
+<span class="tok-out">5  36     ssh me@10.0.0.42</span><br/>
+<span class="blank"></span>
+<span class="tok-prompt">$</span> clip search rebase<br/>
+<span class="tok-out">1  41     git rebase -i HEAD~5</span><br/>
+<span class="tok-out">2  37     git rebase --autostash main</span><br/>
+<span class="blank"></span>
+<span class="tok-prompt">$</span> clip 2&nbsp;&nbsp;<span class="tok-cmt"># pastes "git rebase -i HEAD~5" into this terminal</span>
+        </div>
+
+        <h3 style="font-size: 20px; margin: 48px 0 12px;">Full CLI reference</h3>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+                <tbody>
+                    <tr><td><code>clip</code></td><td>Open the picker (same as <kbd>⌘⇧V</kbd>).</td></tr>
+                    <tr><td><code>clip list</code></td><td>Print the 50 most recent items as <code>INDEX&nbsp;ID&nbsp;★&nbsp;PREVIEW</code>.</td></tr>
+                    <tr><td><code>clip search QUERY</code></td><td>Print recent items matching <code>QUERY</code> (FTS5 prefix match).</td></tr>
+                    <tr><td><code>clip N</code></td><td>Paste the Nth most recent item into the current terminal.</td></tr>
+                    <tr><td><code>clip id &lt;ID&gt;</code></td><td>Paste the item with the given database ID.</td></tr>
+                    <tr><td><code>clip copy N</code></td><td>Copy the Nth item to the clipboard <em>without</em> pasting.</td></tr>
+                    <tr><td><code>clip help</code></td><td>Show this help.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ============== HOW IT WORKS ============== -->
+<section class="architecture" id="how">
+    <div class="section-inner">
+        <div class="eyebrow">How it works</div>
+        <h2>One process. One SQLite file. Zero magic.</h2>
+        <p class="section-lede">Smart Clipboard is a single LSUIElement Swift app. There's no helper daemon, no IPC layer, no background launchd job — just a polling loop and a database.</p>
+
+        <div class="arch-diagram"><img src="assets/diagram-architecture.svg" alt="Architecture diagram"/></div>
+
+        <div class="arch-grid">
+            <div class="arch-card">
+                <h4>1. Capture</h4>
+                <p>A background <code>DispatchSourceTimer</code> reads <code>NSPasteboard.changeCount</code> every 500&nbsp;ms. When it changes, the new payload (text, image, or file URLs) gets read and inserted into SQLite via GRDB.swift.</p>
+            </div>
+            <div class="arch-card">
+                <h4>2. Dedup</h4>
+                <p>If the new payload is byte-equal to the most recent row, the existing row's <code>created_at</code> is bumped instead of inserting a duplicate. Self-writes (when Smart Clipboard restores an item) are suppressed by a fingerprint check.</p>
+            </div>
+            <div class="arch-card">
+                <h4>3. Search</h4>
+                <p>A SQLite <strong>FTS5</strong> virtual table mirrors the <code>preview</code> and <code>text_content</code> columns. Queries split on word boundaries and append <code>*</code> for prefix matching, so search stays sub-millisecond at any size.</p>
+            </div>
+            <div class="arch-card">
+                <h4>4. Restore</h4>
+                <p>To paste an item, Smart Clipboard writes the payload back to <code>NSPasteboard.general</code>, activates the previously focused app, polls for <code>isActive</code> for up to 200&nbsp;ms, then synthesizes <kbd>⌘V</kbd> via <code>CGEventPost</code>.</p>
+            </div>
+            <div class="arch-card">
+                <h4>5. Hotkey</h4>
+                <p>The global <kbd>⌘⇧V</kbd> is registered with Carbon's <code>RegisterEventHotKey</code> — same API native macOS apps have used for two decades. Rebinding from Settings unregisters and re-registers.</p>
+            </div>
+            <div class="arch-card">
+                <h4>6. CLI bridge</h4>
+                <p>The <code>clip</code> command is a tiny shell script that runs <code>open "smartclipboard://paste?id=…"</code>. The main app handles the URL via <code>application(_:open:)</code>, so there's no separate daemon or socket to manage.</p>
+            </div>
+            <div class="arch-card">
+                <h4>7. Backup</h4>
+                <p>Auto-backup is <em>streamed</em>: rows are read 50 at a time from SQLite and written incrementally to a temp file, then atomically renamed. Even with thousands of multi-megabyte images, peak memory stays small.</p>
+            </div>
+            <div class="arch-card">
+                <h4>8. Where it lives</h4>
+                <p>Everything is in <code>~/Library/Application Support/SmartClipboard/clipboard.sqlite</code> (WAL mode). Settings live in <code>UserDefaults</code>. No network calls, ever.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============== BACKUP ============== -->
+<section class="section" id="backup">
+    <div class="section-inner">
+        <div class="eyebrow">Backup &amp; sync</div>
+        <h2>Cloud backup is a folder choice.</h2>
+        <p class="section-lede">There's no Google account to link, no OAuth dance. Pick a folder that's already syncing to the cloud and Smart Clipboard writes to it.</p>
+
+        <div class="two-col">
+            <div>
+                <h3 style="font-size: 18px;">Manual export &amp; import</h3>
+                <p style="color: var(--muted);">
+                    <em>Settings → Backup → Export Now</em> writes
+                    <code>smartclipboard-backup.json</code> to your chosen folder.
+                    <em>Import…</em> appends a previously-exported file to the current DB.
+                </p>
+            </div>
+            <div>
+                <h3 style="font-size: 18px;">Automatic background export</h3>
+                <p style="color: var(--muted);">
+                    When enabled, Smart Clipboard rewrites the JSON file 30 seconds after the
+                    last clipboard change (debounced). The write is streamed and atomic,
+                    so partial files never appear.
+                </p>
+            </div>
+        </div>
+
+        <h3 style="font-size: 20px; margin: 40px 0 14px;">Recommended folder paths</h3>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Service</th><th>Folder to choose</th></tr></thead>
+                <tbody>
+                    <tr><td>iCloud Drive</td><td><code>~/Library/Mobile Documents/com~apple~CloudDocs/SmartClipboard/</code></td></tr>
+                    <tr><td>Dropbox</td><td><code>~/Dropbox/SmartClipboard/</code></td></tr>
+                    <tr><td>Google Drive (desktop app)</td><td><code>~/Google Drive/My Drive/SmartClipboard/</code></td></tr>
+                    <tr><td>OneDrive</td><td><code>~/Library/CloudStorage/OneDrive-Personal/SmartClipboard/</code></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="callout callout-warn" style="margin-top: 24px;">
+            <strong>Heads up:</strong> the export contains every captured payload <em>in cleartext</em> (text + base64 images). Don't auto-export to a folder shared with other people or publicly accessible.
+        </div>
+    </div>
+</section>
+
+<!-- ============== DATA & PRIVACY ============== -->
+<section class="section" id="privacy" style="background: var(--surface-2);">
+    <div class="section-inner">
+        <div class="eyebrow">Data &amp; privacy</div>
+        <h2>What's stored, and what isn't.</h2>
+
+        <div class="two-col">
+            <div>
+                <h3 style="font-size: 18px;">Stored locally</h3>
+                <ul style="color: var(--muted); padding-left: 18px;">
+                    <li>Plain-text content of every text copy.</li>
+                    <li>PNG-encoded image data + a 64px thumbnail for every image copy.</li>
+                    <li>File URLs for every Finder file/folder copy.</li>
+                    <li>Bundle identifier of the app that was frontmost when you copied.</li>
+                    <li>Timestamp, byte size, and a <code>preview</code> string for the menu.</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="font-size: 18px;">Never collected, ever</h3>
+                <ul style="color: var(--muted); padding-left: 18px;">
+                    <li>Network calls of any kind. No telemetry, no crash reports, no analytics.</li>
+                    <li>Encrypted contents from your keychain — those are stored separately by macOS.</li>
+                    <li>Anything outside <code>~/Library/Application Support/SmartClipboard/</code>.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 style="font-size: 20px; margin: 40px 0 10px;">Known tradeoffs</h3>
+        <div class="callout callout-warn">
+            <strong>Passwords are captured.</strong> When you copy from a password manager, the
+            cleartext password lands on the system pasteboard for a moment — long enough for
+            Smart Clipboard's poller to read it. Items flagged
+            <code>org.nspasteboard.ConcealedType</code> / <code>TransientType</code> are <em>not</em>
+            filtered in v1. Use <em>Settings → Data → Clear unstarred</em> to prune, or open
+            the SQLite file with any tool and delete specific rows.
+        </div>
+        <div class="callout">
+            <strong>Unlimited history.</strong> Smart Clipboard never auto-evicts.
+            Storage grows over time, but a clipboard manager's database is dominated by
+            screenshots and small text — typical daily growth is single-digit megabytes.
+            <em>Menu → Clear Unstarred History</em> wipes everything that isn't pinned.
+        </div>
+    </div>
+</section>
+
+<!-- ============== FAQ ============== -->
+<section class="section" id="faq">
+    <div class="section-inner">
+        <div class="eyebrow">FAQ</div>
+        <h2>Frequently asked.</h2>
+
+        <details>
+            <summary>Why does macOS warn me when I open the DMG?</summary>
+            <p>The release DMG is signed with an ad-hoc identity, not an Apple Developer ID. Gatekeeper refuses unsigned/ad-hoc apps on a normal double-click. Right-click the app in <em>Applications</em> and choose <strong>Open</strong> — macOS will ask once, then remember your choice for every future launch. (A future release with a paid Developer ID will let you skip this step.)</p>
+        </details>
+        <details>
+            <summary>How do I get the picker on top of my full-screen app?</summary>
+            <p>The picker panel is configured with <code>collectionBehavior</code> including <code>.fullScreenAuxiliary</code> and <code>.canJoinAllSpaces</code>, so it floats above any full-screen window. If it doesn't appear, ensure Smart Clipboard has Input Monitoring permission (System Settings → Privacy &amp; Security → Input Monitoring) so the hotkey can fire at all.</p>
+        </details>
+        <details>
+            <summary>Why does pressing Enter not paste into my terminal?</summary>
+            <p>That requires <strong>Accessibility</strong> permission (so Smart Clipboard can synthesize <kbd>⌘V</kbd>). Open <em>Settings → Permissions</em> in Smart Clipboard, click <em>Request</em>, then enable the toggle in System Settings. Restart Smart Clipboard once.</p>
+        </details>
+        <details>
+            <summary>Does Smart Clipboard work with Raycast / Alfred / Maccy?</summary>
+            <p>Yes — they don't conflict at the system level. Just make sure your global hotkey isn't claimed by another app; <kbd>⌘⇧V</kbd> is also Raycast's clipboard-history default, for example. Rebind whichever you prefer.</p>
+        </details>
+        <details>
+            <summary>Where is the database file?</summary>
+            <p><code>~/Library/Application Support/SmartClipboard/clipboard.sqlite</code> (plus <code>-wal</code> and <code>-shm</code> sidecar files from SQLite WAL mode). You can <code>sqlite3</code> it directly to inspect or query.</p>
+        </details>
+        <details>
+            <summary>How do I uninstall it cleanly?</summary>
+            <p>Quit the app (menu bar → <em>Quit Smart Clipboard</em>), drag <code>/Applications/SmartClipboard.app</code> to the Trash, then delete:</p>
+            <ul>
+                <li><code>~/Library/Application Support/SmartClipboard/</code></li>
+                <li><code>~/Library/Preferences/com.shailka.SmartClipboard.plist</code></li>
+                <li><code>/usr/local/bin/clip</code> (if you installed the CLI)</li>
+            </ul>
+            <p>Remove the entries from <em>System Settings → Privacy &amp; Security → Accessibility</em> and <em>… → Input Monitoring</em>.</p>
+        </details>
+        <details>
+            <summary>Why no rich text / HTML capture?</summary>
+            <p>v1 stores plain text only. Rich-text capture (preserving formatting from browsers and word processors) is on the v2 roadmap — it requires more careful pasteboard-type handling to avoid pasting a styled blob into a terminal.</p>
+        </details>
+        <details>
+            <summary>How do I sync between two Macs?</summary>
+            <p>Today: point auto-backup at an iCloud Drive / Dropbox / Drive folder on both Macs and run <em>Import…</em> when you want to merge. Native CloudKit sync of starred items is on the v2 roadmap.</p>
+        </details>
+        <details>
+            <summary>Is this safe for an enterprise machine?</summary>
+            <p>It stays entirely on-device, makes zero network calls, and the only API capabilities it uses (NSPasteboard, Carbon hotkey, Accessibility for paste) are visible in the app sandbox/entitlements. That said: the database is unencrypted at rest and captures everything, including secrets. Review with your security team before deploying on an enterprise fleet.</p>
+        </details>
+    </div>
+</section>
+
+<!-- ============== ROADMAP ============== -->
+<section class="section" id="roadmap" style="background: var(--surface-2);">
+    <div class="section-inner">
+        <div class="eyebrow">Roadmap</div>
+        <h2>What's next.</h2>
+        <p class="section-lede">v1 is intentionally small and self-contained. These are the upgrades on the table.</p>
+
+        <div class="feature-grid">
+            <div class="feature">
+                <div class="feature-icon">☁️</div>
+                <h3>CloudKit sync</h3>
+                <p>Native cross-Mac sync of starred items via iCloud. No folder trickery required.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔐</div>
+                <h3>Encryption at rest</h3>
+                <p>Optional AES-encrypted SQLite database with a passphrase, for storing sensitive copies.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🛡</div>
+                <h3>Concealed-type filtering</h3>
+                <p>Opt-in to honor <code>org.nspasteboard.ConcealedType</code> from 1Password, Bitwarden, etc.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📝</div>
+                <h3>Rich-text capture</h3>
+                <p>Preserve RTF/HTML formatting from browsers and word processors.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🏷</div>
+                <h3>Tags &amp; snippets</h3>
+                <p>Group items into named collections; templated snippets with <code>{{ placeholders }}</code>.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">✅</div>
+                <h3>Notarized DMG</h3>
+                <p>Apple Developer-ID-signed and notarized release so first-launch needs no right-click.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer>
+    <div class="footer-inner">
+        <div>
+            <div class="brand-mark" style="margin-bottom: 6px;">
+                <img src="assets/icon-128.png" alt="" style="width: 22px; height: 22px;"/>
+                <span>Smart Clipboard</span>
+            </div>
+            <span>© <span id="year">2026</span> · MIT licensed · Made for macOS</span>
+        </div>
+        <div class="footer-links">
+            <a href="https://github.com/tech-sumit/SmartClipboard" target="_blank" rel="noopener">GitHub</a>
+            <a href="https://github.com/tech-sumit/SmartClipboard/releases" target="_blank" rel="noopener">Releases</a>
+            <a href="https://github.com/tech-sumit/SmartClipboard/issues" target="_blank" rel="noopener">Issues</a>
+            <a href="https://github.com/tech-sumit/SmartClipboard/blob/main/docs/superpowers/specs/2026-05-24-smart-clipboard-design.md" target="_blank" rel="noopener">Design doc</a>
+            <a href="https://github.com/tech-sumit/SmartClipboard/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
+        </div>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -15,7 +15,7 @@ Records every text, image, and file you copy into a local SQLite database; re-pa
 [![Downloads](https://img.shields.io/github/downloads/tech-sumit/SmartClipboard/total?color=blue)](https://github.com/tech-sumit/SmartClipboard/releases)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-[Download DMG](https://github.com/tech-sumit/SmartClipboard/releases/latest) · [Features](#features) · [Build from source](#build-from-source) · [Design doc](docs/superpowers/specs/2026-05-24-smart-clipboard-design.md)
+[**Website**](https://tech-sumit.github.io/SmartClipboard/) · [Download DMG](https://github.com/tech-sumit/SmartClipboard/releases/latest) · [Features](#features) · [Build from source](#build-from-source) · [Design doc](docs/superpowers/specs/2026-05-24-smart-clipboard-design.md)
 
 </div>
 

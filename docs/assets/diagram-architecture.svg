@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+    </marker>
+    <linearGradient id="cardBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="rgba(94,99,255,0.10)"/>
+      <stop offset="1" stop-color="rgba(94,99,255,0.04)"/>
+    </linearGradient>
+  </defs>
+
+  <style>
+    .label { font-size: 12px; fill: var(--ink, #1d1d1f); }
+    .title { font-size: 13px; font-weight: 700; fill: var(--ink, #1d1d1f); }
+    .sub   { font-size: 10px; fill: var(--muted, #6e6e73); }
+    .edge  { stroke: #5E63FF; stroke-width: 1.4; fill: none; }
+    .edge-label { font-size: 10px; fill: #5E63FF; font-weight: 600; }
+    .box   { fill: rgba(94,99,255,0.06); stroke: rgba(94,99,255,0.4); stroke-width: 1; }
+    .accent { fill: #5E63FF; }
+    .ext   { fill: rgba(0,0,0,0.04); stroke: rgba(0,0,0,0.2); stroke-width: 1; stroke-dasharray: 3 3; }
+  </style>
+
+  <!-- Outer process boundary -->
+  <rect x="260" y="60" width="540" height="440" rx="14" fill="rgba(94,99,255,0.04)" stroke="rgba(94,99,255,0.35)" stroke-width="1.5" stroke-dasharray="8 4"/>
+  <text x="280" y="84" class="title" fill="#3437C9">SmartClipboard.app</text>
+  <text x="280" y="100" class="sub">single process · LSUIElement · no daemon</text>
+
+  <!-- External entities (left) -->
+  <g>
+    <rect x="40" y="110" width="170" height="56" rx="8" class="ext"/>
+    <text x="125" y="135" text-anchor="middle" class="title">NSPasteboard</text>
+    <text x="125" y="152" text-anchor="middle" class="sub">macOS system clipboard</text>
+
+    <rect x="40" y="200" width="170" height="56" rx="8" class="ext"/>
+    <text x="125" y="225" text-anchor="middle" class="title">Carbon Hotkey</text>
+    <text x="125" y="242" text-anchor="middle" class="sub">⌘⇧V global</text>
+
+    <rect x="40" y="290" width="170" height="56" rx="8" class="ext"/>
+    <text x="125" y="315" text-anchor="middle" class="title">clip CLI</text>
+    <text x="125" y="332" text-anchor="middle" class="sub">shell → open URL</text>
+
+    <rect x="40" y="380" width="170" height="56" rx="8" class="ext"/>
+    <text x="125" y="405" text-anchor="middle" class="title">NSStatusItem</text>
+    <text x="125" y="422" text-anchor="middle" class="sub">menu bar icon</text>
+  </g>
+
+  <!-- Internal components -->
+  <g>
+    <!-- ClipboardMonitor -->
+    <rect x="290" y="110" width="180" height="56" rx="8" class="box"/>
+    <text x="380" y="135" text-anchor="middle" class="title">ClipboardMonitor</text>
+    <text x="380" y="152" text-anchor="middle" class="sub">0.5s changeCount poll</text>
+
+    <!-- HotkeyManager -->
+    <rect x="290" y="200" width="180" height="56" rx="8" class="box"/>
+    <text x="380" y="225" text-anchor="middle" class="title">HotkeyManager</text>
+    <text x="380" y="242" text-anchor="middle" class="sub">Carbon RegisterEventHotKey</text>
+
+    <!-- URLSchemeHandler -->
+    <rect x="290" y="290" width="180" height="56" rx="8" class="box"/>
+    <text x="380" y="315" text-anchor="middle" class="title">URLSchemeHandler</text>
+    <text x="380" y="332" text-anchor="middle" class="sub">smartclipboard://…</text>
+
+    <!-- MenuBarController -->
+    <rect x="290" y="380" width="180" height="56" rx="8" class="box"/>
+    <text x="380" y="405" text-anchor="middle" class="title">MenuBarController</text>
+    <text x="380" y="422" text-anchor="middle" class="sub">NSMenu rendering</text>
+
+    <!-- ClipRepository (center) -->
+    <rect x="540" y="200" width="200" height="76" rx="8" fill="rgba(94,99,255,0.18)" stroke="#5E63FF" stroke-width="1.5"/>
+    <text x="640" y="226" text-anchor="middle" class="title" fill="#3437C9">ClipRepository</text>
+    <text x="640" y="244" text-anchor="middle" class="sub">CRUD + dedup + FTS5 search</text>
+    <text x="640" y="262" text-anchor="middle" class="sub">via GRDB.swift</text>
+
+    <!-- PickerPanel -->
+    <rect x="540" y="110" width="200" height="56" rx="8" class="box"/>
+    <text x="640" y="135" text-anchor="middle" class="title">PickerPanel</text>
+    <text x="640" y="152" text-anchor="middle" class="sub">non-activating NSPanel</text>
+
+    <!-- Paster -->
+    <rect x="540" y="310" width="200" height="56" rx="8" class="box"/>
+    <text x="640" y="335" text-anchor="middle" class="title">Paster</text>
+    <text x="640" y="352" text-anchor="middle" class="sub">CGEventPost ⌘V</text>
+
+    <!-- BackupManager -->
+    <rect x="540" y="400" width="200" height="56" rx="8" class="box"/>
+    <text x="640" y="425" text-anchor="middle" class="title">BackupManager</text>
+    <text x="640" y="442" text-anchor="middle" class="sub">streamed JSON export</text>
+  </g>
+
+  <!-- External destinations (right) -->
+  <g>
+    <rect x="800" y="200" width="140" height="76" rx="8" class="ext"/>
+    <text x="870" y="225" text-anchor="middle" class="title">SQLite + FTS5</text>
+    <text x="870" y="242" text-anchor="middle" class="sub">~/Library/Application</text>
+    <text x="870" y="256" text-anchor="middle" class="sub">Support/SmartClipboard/</text>
+
+    <rect x="800" y="310" width="140" height="56" rx="8" class="ext"/>
+    <text x="870" y="335" text-anchor="middle" class="title">Focused App</text>
+    <text x="870" y="352" text-anchor="middle" class="sub">receives ⌘V</text>
+
+    <rect x="800" y="400" width="140" height="56" rx="8" class="ext"/>
+    <text x="870" y="423" text-anchor="middle" class="title">iCloud / Drive /</text>
+    <text x="870" y="438" text-anchor="middle" class="title">Dropbox folder</text>
+  </g>
+
+  <!-- Edges -->
+  <g color="#5E63FF">
+    <path class="edge" d="M210,138 H280" marker-end="url(#arrow)"/>
+    <text x="245" y="132" class="edge-label" text-anchor="middle">poll</text>
+
+    <path class="edge" d="M210,228 H280" marker-end="url(#arrow)"/>
+    <text x="245" y="222" class="edge-label" text-anchor="middle">press</text>
+
+    <path class="edge" d="M210,318 H280" marker-end="url(#arrow)"/>
+    <text x="245" y="312" class="edge-label" text-anchor="middle">URL</text>
+
+    <path class="edge" d="M210,408 H280" marker-end="url(#arrow)"/>
+    <text x="245" y="402" class="edge-label" text-anchor="middle">click</text>
+
+    <!-- Internal to repo / panel -->
+    <path class="edge" d="M470,138 C500,138 520,200 540,220" marker-end="url(#arrow)"/>
+    <path class="edge" d="M470,228 C495,228 510,200 540,180" marker-end="url(#arrow)"/>
+    <path class="edge" d="M470,318 C500,318 520,260 540,250" marker-end="url(#arrow)"/>
+    <path class="edge" d="M470,408 C500,408 520,260 540,250" marker-end="url(#arrow)"/>
+
+    <!-- Repo / panel / paster / backup -->
+    <path class="edge" d="M640,200 V170" marker-end="url(#arrow)"/>
+    <text x="650" y="190" class="edge-label">reads</text>
+
+    <path class="edge" d="M640,280 V310" marker-end="url(#arrow)"/>
+    <text x="650" y="298" class="edge-label">commit</text>
+
+    <path class="edge" d="M640,280 C640,330 640,380 640,400" marker-end="url(#arrow)"/>
+    <text x="650" y="385" class="edge-label">stream</text>
+
+    <!-- External -->
+    <path class="edge" d="M740,240 H800" marker-end="url(#arrow)"/>
+    <text x="770" y="232" class="edge-label" text-anchor="middle">SQL</text>
+
+    <path class="edge" d="M740,340 H800" marker-end="url(#arrow)"/>
+    <text x="770" y="332" class="edge-label" text-anchor="middle">⌘V</text>
+
+    <path class="edge" d="M740,430 H800" marker-end="url(#arrow)"/>
+    <text x="770" y="422" class="edge-label" text-anchor="middle">json</text>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(40 480)">
+    <rect width="14" height="14" class="box"/>
+    <text x="22" y="11" class="sub">Smart Clipboard internal</text>
+    <rect x="190" width="14" height="14" class="ext"/>
+    <text x="212" y="11" class="sub">External (OS / file / process)</text>
+    <rect x="430" width="14" height="14" fill="rgba(94,99,255,0.18)" stroke="#5E63FF"/>
+    <text x="452" y="11" class="sub">Storage core</text>
+  </g>
+</svg>

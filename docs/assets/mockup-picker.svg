@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 600" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f1228"/>
+      <stop offset="1" stop-color="#1d1f3e"/>
+    </linearGradient>
+    <filter id="windowShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14"/>
+      <feOffset dx="0" dy="10"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="880" height="600" fill="url(#bg2)"/>
+  <circle cx="700" cy="120" r="180" fill="#5E63FF" opacity="0.12"/>
+  <circle cx="180" cy="500" r="200" fill="#7B61FF" opacity="0.10"/>
+
+  <!-- Picker window -->
+  <g filter="url(#windowShadow)" transform="translate(80 70)">
+    <!-- Background -->
+    <rect width="720" height="460" rx="12" fill="rgba(38,38,52,0.96)" stroke="rgba(255,255,255,0.06)"/>
+
+    <!-- Search bar -->
+    <rect x="0" y="0" width="720" height="56" rx="12" fill="rgba(255,255,255,0.04)"/>
+    <text x="24" y="36" font-size="18" fill="rgba(255,255,255,0.5)">🔍</text>
+    <text x="56" y="38" font-size="17" fill="#FFFFFF">git rebase</text>
+    <text x="166" y="38" font-size="17" fill="rgba(255,255,255,0.3)">|</text>
+    <text x="670" y="38" font-size="12" fill="rgba(255,255,255,0.4)" text-anchor="end">42</text>
+
+    <line x1="0" y1="56" x2="720" y2="56" stroke="rgba(255,255,255,0.08)"/>
+
+    <!-- Result items -->
+    <!-- Selected: item 1 -->
+    <g transform="translate(0 64)">
+      <rect x="8" y="0" width="704" height="62" rx="8" fill="rgba(94,99,255,0.22)" stroke="rgba(94,99,255,0.5)"/>
+      <rect x="20" y="12" width="38" height="38" rx="6" fill="rgba(94,99,255,0.25)"/>
+      <text x="39" y="36" font-size="18" text-anchor="middle" fill="#FFFFFF">📄</text>
+      <text x="68" y="28" font-size="14" font-weight="500" fill="#FFFFFF" font-family="ui-monospace, monospace">git rebase -i HEAD~5</text>
+      <g transform="translate(68 42)">
+        <rect x="0" y="0" width="34" height="14" rx="3" fill="rgba(94,99,255,0.3)"/>
+        <text x="17" y="11" font-size="9" font-weight="700" fill="rgba(255,255,255,0.85)" text-anchor="middle">TEXT</text>
+        <text x="42" y="11" font-size="11" fill="rgba(255,255,255,0.55)">iTerm  ·  2 min ago  ·  21 B</text>
+      </g>
+    </g>
+
+    <!-- Item 2 -->
+    <g transform="translate(0 134)">
+      <rect x="8" y="0" width="704" height="62" rx="8" fill="transparent"/>
+      <rect x="20" y="12" width="38" height="38" rx="6" fill="rgba(255,255,255,0.08)"/>
+      <text x="39" y="36" font-size="18" text-anchor="middle" fill="rgba(255,255,255,0.8)">📄</text>
+      <text x="68" y="28" font-size="14" fill="rgba(255,255,255,0.9)" font-family="ui-monospace, monospace">git rebase --autostash main</text>
+      <g transform="translate(68 42)">
+        <rect x="0" y="0" width="34" height="14" rx="3" fill="rgba(255,255,255,0.12)"/>
+        <text x="17" y="11" font-size="9" font-weight="700" fill="rgba(255,255,255,0.7)" text-anchor="middle">TEXT</text>
+        <text x="42" y="11" font-size="11" fill="rgba(255,255,255,0.45)">iTerm  ·  8 min ago  ·  27 B</text>
+      </g>
+    </g>
+
+    <!-- Item 3 -->
+    <g transform="translate(0 204)">
+      <rect x="8" y="0" width="704" height="62" rx="8" fill="transparent"/>
+      <rect x="20" y="12" width="38" height="38" rx="6" fill="rgba(255,255,255,0.08)"/>
+      <text x="39" y="36" font-size="18" text-anchor="middle" fill="rgba(255,255,255,0.8)">📄</text>
+      <text x="68" y="28" font-size="14" fill="rgba(255,255,255,0.9)" font-family="ui-monospace, monospace">git rebase --onto main feature/x</text>
+      <g transform="translate(68 42)">
+        <rect x="0" y="0" width="34" height="14" rx="3" fill="rgba(255,255,255,0.12)"/>
+        <text x="17" y="11" font-size="9" font-weight="700" fill="rgba(255,255,255,0.7)" text-anchor="middle">TEXT</text>
+        <text x="42" y="11" font-size="11" fill="rgba(255,255,255,0.45)">VS Code  ·  1 hr ago  ·  33 B</text>
+      </g>
+    </g>
+
+    <!-- Item 4 -->
+    <g transform="translate(0 274)">
+      <rect x="8" y="0" width="704" height="62" rx="8" fill="transparent"/>
+      <rect x="20" y="12" width="38" height="38" rx="6" fill="rgba(255,255,255,0.08)"/>
+      <text x="39" y="36" font-size="18" text-anchor="middle" fill="rgba(255,255,255,0.8)">📄</text>
+      <text x="68" y="28" font-size="14" fill="rgba(255,255,255,0.9)" font-family="ui-monospace, monospace">git rebase --continue</text>
+      <g transform="translate(68 42)">
+        <rect x="0" y="0" width="34" height="14" rx="3" fill="rgba(255,255,255,0.12)"/>
+        <text x="17" y="11" font-size="9" font-weight="700" fill="rgba(255,255,255,0.7)" text-anchor="middle">TEXT</text>
+        <text x="42" y="11" font-size="11" fill="rgba(255,255,255,0.45)">iTerm  ·  3 hr ago  ·  22 B</text>
+      </g>
+    </g>
+
+    <line x1="0" y1="408" x2="720" y2="408" stroke="rgba(255,255,255,0.08)"/>
+
+    <!-- Footer -->
+    <g transform="translate(0 408)">
+      <rect x="0" y="0" width="720" height="52" rx="0" fill="rgba(0,0,0,0.18)"/>
+      <g transform="translate(20 32)">
+        <rect x="0" y="-14" width="20" height="20" rx="4" fill="rgba(94,99,255,0.3)"/>
+        <text x="10" y="0" font-size="11" font-weight="700" text-anchor="middle" fill="#FFFFFF">↩</text>
+        <text x="28" y="0" font-size="12" fill="rgba(255,255,255,0.75)">Paste</text>
+
+        <rect x="80" y="-14" width="42" height="20" rx="4" fill="rgba(94,99,255,0.18)"/>
+        <text x="101" y="0" font-size="10" font-weight="600" text-anchor="middle" fill="#FFFFFF">⌥↩</text>
+        <text x="130" y="0" font-size="12" fill="rgba(255,255,255,0.75)">Copy only</text>
+
+        <rect x="220" y="-14" width="20" height="20" rx="4" fill="rgba(255,255,255,0.12)"/>
+        <text x="230" y="-1" font-size="10" font-weight="700" text-anchor="middle" fill="#FFFFFF">⎋</text>
+        <text x="248" y="0" font-size="12" fill="rgba(255,255,255,0.75)">Close</text>
+
+        <text x="430" y="0" font-size="11" fill="rgba(255,255,255,0.5)">⌘F star</text>
+        <text x="500" y="0" font-size="11" fill="rgba(255,255,255,0.5)">⌘⌫ delete</text>
+        <text x="585" y="0" font-size="11" fill="rgba(255,255,255,0.5)">↑↓ navigate</text>
+      </g>
+    </g>
+  </g>
+</svg>

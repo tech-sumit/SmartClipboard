@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 660" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0c0f24"/>
+      <stop offset="1" stop-color="#1f1c3e"/>
+    </linearGradient>
+    <filter id="winShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="16"/>
+      <feOffset dx="0" dy="12"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="880" height="660" fill="url(#bg3)"/>
+  <circle cx="800" cy="100" r="160" fill="#5E63FF" opacity="0.12"/>
+  <circle cx="100" cy="550" r="200" fill="#7B61FF" opacity="0.1"/>
+
+  <!-- Settings window -->
+  <g filter="url(#winShadow)" transform="translate(60 40)">
+    <!-- Window with title bar -->
+    <rect width="760" height="580" rx="12" fill="rgba(244,244,248,0.98)" stroke="rgba(0,0,0,0.12)"/>
+    <!-- Title bar -->
+    <rect width="760" height="36" rx="12" fill="rgba(232,232,238,0.95)"/>
+    <rect y="22" width="760" height="14" fill="rgba(232,232,238,0.95)"/>
+    <line x1="0" y1="36" x2="760" y2="36" stroke="rgba(0,0,0,0.08)"/>
+
+    <!-- Traffic lights -->
+    <circle cx="20" cy="18" r="6.5" fill="#FF5F57" stroke="rgba(0,0,0,0.1)" stroke-width="0.5"/>
+    <circle cx="38" cy="18" r="6.5" fill="#FEBC2E" stroke="rgba(0,0,0,0.1)" stroke-width="0.5"/>
+    <circle cx="56" cy="18" r="6.5" fill="#28C840" stroke="rgba(0,0,0,0.1)" stroke-width="0.5"/>
+
+    <text x="380" y="23" font-size="13" font-weight="600" fill="#1d1d1f" text-anchor="middle">Smart Clipboard Settings</text>
+
+    <!-- Content area -->
+    <g transform="translate(0 36)">
+      <!-- Section: Global Hotkey -->
+      <text x="32" y="32" font-size="11" font-weight="700" fill="#86868b" letter-spacing="0.4">GLOBAL HOTKEY</text>
+
+      <rect x="28" y="44" width="704" height="64" rx="10" fill="#FFFFFF" stroke="rgba(0,0,0,0.06)"/>
+      <text x="44" y="76" font-size="13" fill="#1d1d1f">Open Picker</text>
+      <text x="44" y="92" font-size="11" fill="#86868b">Triggers the global search picker from any app</text>
+      <rect x="600" y="62" width="116" height="28" rx="6" fill="rgba(94,99,255,0.12)" stroke="rgba(94,99,255,0.35)"/>
+      <text x="658" y="80" font-size="13" font-weight="600" fill="#3437C9" text-anchor="middle" font-family="ui-monospace, monospace">⌘⇧V</text>
+
+      <!-- Section: Menu Bar -->
+      <text x="32" y="142" font-size="11" font-weight="700" fill="#86868b" letter-spacing="0.4">MENU BAR</text>
+
+      <rect x="28" y="154" width="704" height="58" rx="10" fill="#FFFFFF" stroke="rgba(0,0,0,0.06)"/>
+      <text x="44" y="180" font-size="13" fill="#1d1d1f">Recent items shown in menu: 25</text>
+      <!-- Slider -->
+      <line x1="44" y1="196" x2="716" y2="196" stroke="rgba(0,0,0,0.1)" stroke-width="3" stroke-linecap="round"/>
+      <line x1="44" y1="196" x2="220" y2="196" stroke="#5E63FF" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="220" cy="196" r="9" fill="#FFFFFF" stroke="rgba(0,0,0,0.15)" stroke-width="0.5" filter="url(#winShadow)"/>
+
+      <!-- Section: Backup -->
+      <text x="32" y="246" font-size="11" font-weight="700" fill="#86868b" letter-spacing="0.4">BACKUP</text>
+
+      <rect x="28" y="258" width="704" height="116" rx="10" fill="#FFFFFF" stroke="rgba(0,0,0,0.06)"/>
+      <!-- Toggle row -->
+      <text x="44" y="282" font-size="13" fill="#1d1d1f">Automatic background export (JSON)</text>
+      <!-- toggle on -->
+      <rect x="668" y="270" width="44" height="22" rx="11" fill="#28C840"/>
+      <circle cx="700" cy="281" r="9" fill="#FFFFFF"/>
+
+      <line x1="44" y1="306" x2="716" y2="306" stroke="rgba(0,0,0,0.08)"/>
+
+      <text x="44" y="328" font-size="13" fill="#1d1d1f">Folder</text>
+      <text x="716" y="328" font-size="12" fill="#86868b" text-anchor="end" font-family="ui-monospace, monospace">~/iCloud Drive/SmartClipboard/</text>
+
+      <!-- Buttons -->
+      <rect x="44" y="344" width="110" height="22" rx="5" fill="rgba(0,0,0,0.06)"/>
+      <text x="99" y="359" font-size="12" fill="#1d1d1f" text-anchor="middle">Choose folder…</text>
+
+      <rect x="162" y="344" width="86" height="22" rx="5" fill="rgba(94,99,255,0.18)"/>
+      <text x="205" y="359" font-size="12" fill="#3437C9" text-anchor="middle" font-weight="600">Export now</text>
+
+      <rect x="256" y="344" width="70" height="22" rx="5" fill="rgba(0,0,0,0.06)"/>
+      <text x="291" y="359" font-size="12" fill="#1d1d1f" text-anchor="middle">Import…</text>
+
+      <!-- Section: Permissions -->
+      <text x="32" y="404" font-size="11" font-weight="700" fill="#86868b" letter-spacing="0.4">PERMISSIONS</text>
+
+      <rect x="28" y="416" width="704" height="84" rx="10" fill="#FFFFFF" stroke="rgba(0,0,0,0.06)"/>
+      <text x="44" y="440" font-size="14" fill="#28C840">✓</text>
+      <text x="60" y="440" font-size="13" fill="#1d1d1f">Accessibility</text>
+      <text x="716" y="440" font-size="12" fill="#86868b" text-anchor="end">Granted</text>
+
+      <line x1="44" y1="452" x2="716" y2="452" stroke="rgba(0,0,0,0.08)"/>
+
+      <text x="44" y="476" font-size="14" fill="#28C840">✓</text>
+      <text x="60" y="476" font-size="13" fill="#1d1d1f">Input Monitoring</text>
+      <text x="716" y="476" font-size="12" fill="#86868b" text-anchor="end">Granted</text>
+
+      <!-- Section: CLI -->
+      <text x="32" y="530" font-size="11" font-weight="700" fill="#86868b" letter-spacing="0.4">CLI</text>
+    </g>
+  </g>
+</svg>

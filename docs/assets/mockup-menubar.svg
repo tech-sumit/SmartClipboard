@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 640" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a1d2e"/>
+      <stop offset="1" stop-color="#2a2d4e"/>
+    </linearGradient>
+    <linearGradient id="menubarGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="rgba(255,255,255,0.08)"/>
+      <stop offset="1" stop-color="rgba(255,255,255,0.04)"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Desktop background -->
+  <rect width="880" height="640" fill="url(#bg)"/>
+  <circle cx="160" cy="120" r="180" fill="#5E63FF" opacity="0.15"/>
+  <circle cx="760" cy="540" r="220" fill="#7B61FF" opacity="0.12"/>
+
+  <!-- Mac menu bar -->
+  <rect x="0" y="0" width="880" height="28" fill="rgba(0,0,0,0.4)"/>
+  <text x="20" y="19" font-size="13" font-weight="600" fill="#FFFFFF">  Finder</text>
+  <text x="100" y="19" font-size="13" fill="rgba(255,255,255,0.85)">File</text>
+  <text x="140" y="19" font-size="13" fill="rgba(255,255,255,0.85)">Edit</text>
+  <text x="180" y="19" font-size="13" fill="rgba(255,255,255,0.85)">View</text>
+  <text x="220" y="19" font-size="13" fill="rgba(255,255,255,0.85)">Go</text>
+
+  <!-- Right-side icons -->
+  <text x="700" y="19" font-size="13" fill="rgba(255,255,255,0.7)">🔋</text>
+  <text x="725" y="19" font-size="13" fill="rgba(255,255,255,0.7)">📶</text>
+  <text x="750" y="19" font-size="13" fill="rgba(255,255,255,0.7)">🔍</text>
+
+  <!-- SmartClipboard menu bar icon (highlighted) -->
+  <rect x="770" y="3" width="22" height="22" rx="4" fill="rgba(94,99,255,0.25)"/>
+  <g transform="translate(774 7)">
+    <rect x="2" y="3" width="10" height="11" rx="1.2" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.5"/>
+    <rect x="4.5" y="1.5" width="5" height="3" rx="0.8" fill="#FFFFFF"/>
+  </g>
+  <line x1="770" y1="28" x2="792" y2="28" stroke="#5E63FF" stroke-width="2"/>
+
+  <text x="810" y="19" font-size="11" fill="rgba(255,255,255,0.7)" font-weight="500">2:47 PM</text>
+
+  <!-- Dropdown menu -->
+  <g filter="url(#shadow)" transform="translate(560 36)">
+    <rect width="300" height="540" rx="10" fill="rgba(40,40,50,0.96)" stroke="rgba(255,255,255,0.08)"/>
+
+    <!-- Header -->
+    <text x="14" y="22" font-size="11" font-weight="600" fill="rgba(255,255,255,0.4)" letter-spacing="0.4">SMART CLIPBOARD</text>
+    <line x1="0" y1="34" x2="300" y2="34" stroke="rgba(255,255,255,0.08)"/>
+
+    <!-- Open picker -->
+    <rect x="6" y="40" width="288" height="26" rx="5" fill="transparent"/>
+    <text x="14" y="58" font-size="13" fill="#FFFFFF">Open Picker</text>
+    <text x="240" y="58" font-size="12" fill="rgba(255,255,255,0.5)" font-family="ui-monospace, monospace">⌘⇧V</text>
+    <line x1="0" y1="74" x2="300" y2="74" stroke="rgba(255,255,255,0.08)"/>
+
+    <!-- Starred section -->
+    <text x="14" y="92" font-size="10" font-weight="700" fill="rgba(255,255,255,0.4)" letter-spacing="0.4">STARRED</text>
+
+    <!-- Star item 1 -->
+    <rect x="6" y="100" width="288" height="28" rx="5" fill="rgba(94,99,255,0.18)"/>
+    <text x="14" y="118" font-size="13" fill="#FFD23F">★</text>
+    <text x="28" y="118" font-size="13" fill="#FFFFFF">TODO: refactor auth module</text>
+
+    <!-- Star item 2 -->
+    <rect x="6" y="132" width="288" height="28" rx="5" fill="transparent"/>
+    <text x="14" y="150" font-size="13" fill="#FFD23F">★</text>
+    <text x="28" y="150" font-size="13" fill="rgba(255,255,255,0.9)" font-family="ui-monospace, monospace" font-size="12">git rebase -i HEAD~5</text>
+
+    <line x1="0" y1="170" x2="300" y2="170" stroke="rgba(255,255,255,0.08)"/>
+
+    <!-- Recent section -->
+    <text x="14" y="188" font-size="10" font-weight="700" fill="rgba(255,255,255,0.4)" letter-spacing="0.4">RECENT</text>
+
+    <!-- Item 1 -->
+    <g transform="translate(0 196)">
+      <rect x="6" y="0" width="288" height="34" rx="5" fill="rgba(255,255,255,0.04)"/>
+      <text x="14" y="14" font-size="9" font-weight="700" fill="rgba(94,99,255,0.9)" letter-spacing="0.4">1</text>
+      <text x="26" y="14" font-size="8" font-weight="600" fill="rgba(94,99,255,0.7)" letter-spacing="0.4">TEXT</text>
+      <text x="14" y="28" font-size="12" fill="#FFFFFF">https://news.ycombinator.com/i…</text>
+    </g>
+
+    <!-- Item 2 - image -->
+    <g transform="translate(0 234)">
+      <rect x="6" y="0" width="288" height="42" rx="5" fill="transparent"/>
+      <rect x="14" y="6" width="30" height="30" rx="4" fill="#5E63FF" opacity="0.4"/>
+      <text x="29" y="26" font-size="14" text-anchor="middle" fill="#FFFFFF">🖼</text>
+      <text x="50" y="22" font-size="12" fill="#FFFFFF">Screenshot 2026-05-24 at 2.47.png</text>
+      <text x="50" y="35" font-size="10" fill="rgba(255,255,255,0.4)">IMG · 1920×1080 · 2 min ago</text>
+    </g>
+
+    <!-- Item 3 -->
+    <g transform="translate(0 280)">
+      <rect x="6" y="0" width="288" height="34" rx="5" fill="transparent"/>
+      <text x="14" y="14" font-size="9" font-weight="700" fill="rgba(255,255,255,0.5)" letter-spacing="0.4">3</text>
+      <text x="26" y="14" font-size="8" font-weight="600" fill="rgba(94,99,255,0.7)" letter-spacing="0.4">TEXT</text>
+      <text x="14" y="28" font-size="12" fill="#FFFFFF" font-family="ui-monospace, monospace">npm run dev</text>
+    </g>
+
+    <!-- Item 4 -->
+    <g transform="translate(0 318)">
+      <rect x="6" y="0" width="288" height="34" rx="5" fill="transparent"/>
+      <text x="14" y="14" font-size="9" font-weight="700" fill="rgba(255,255,255,0.5)" letter-spacing="0.4">4</text>
+      <text x="26" y="14" font-size="8" font-weight="600" fill="rgba(94,99,255,0.7)" letter-spacing="0.4">TEXT</text>
+      <text x="14" y="28" font-size="12" fill="#FFFFFF" font-family="ui-monospace, monospace">ssh me@10.0.0.42</text>
+    </g>
+
+    <!-- Item 5 - files -->
+    <g transform="translate(0 356)">
+      <rect x="6" y="0" width="288" height="34" rx="5" fill="transparent"/>
+      <text x="14" y="14" font-size="9" font-weight="700" fill="rgba(255,255,255,0.5)" letter-spacing="0.4">5</text>
+      <text x="26" y="14" font-size="8" font-weight="600" fill="#FFB84F" letter-spacing="0.4">FILES</text>
+      <text x="14" y="28" font-size="12" fill="#FFFFFF">📂 build-dmg.sh, project.yml</text>
+    </g>
+
+    <!-- Item 6 -->
+    <g transform="translate(0 394)">
+      <rect x="6" y="0" width="288" height="34" rx="5" fill="transparent"/>
+      <text x="14" y="14" font-size="9" font-weight="700" fill="rgba(255,255,255,0.5)" letter-spacing="0.4">6</text>
+      <text x="26" y="14" font-size="8" font-weight="600" fill="rgba(94,99,255,0.7)" letter-spacing="0.4">TEXT</text>
+      <text x="14" y="28" font-size="12" fill="rgba(255,255,255,0.8)">user@example.com</text>
+    </g>
+
+    <line x1="0" y1="438" x2="300" y2="438" stroke="rgba(255,255,255,0.08)"/>
+
+    <!-- Footer actions -->
+    <text x="14" y="458" font-size="13" fill="rgba(255,255,255,0.85)">Clear Unstarred History</text>
+
+    <text x="14" y="484" font-size="13" fill="rgba(255,255,255,0.85)">Settings…</text>
+    <text x="270" y="484" font-size="12" fill="rgba(255,255,255,0.5)" font-family="ui-monospace, monospace">⌘,</text>
+
+    <line x1="0" y1="498" x2="300" y2="498" stroke="rgba(255,255,255,0.08)"/>
+
+    <text x="14" y="518" font-size="13" fill="rgba(255,255,255,0.85)">Quit Smart Clipboard</text>
+    <text x="270" y="518" font-size="12" fill="rgba(255,255,255,0.5)" font-family="ui-monospace, monospace">⌘Q</text>
+  </g>
+</svg>
