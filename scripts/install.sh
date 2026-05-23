@@ -25,9 +25,10 @@ ok() { printf "\033[32m✔\033[0m %s\n" "$*"; }
 [[ "$(uname)" == "Darwin" ]] || err "This installer is for macOS only."
 
 TMP=$(mktemp -d)
-trap 'rm -rf "$TMP"; hdiutil detach "$MOUNT" -quiet 2>/dev/null || true' EXIT
+MOUNT=""
+trap 'rm -rf "$TMP"; [[ -n "${MOUNT:-}" ]] && hdiutil detach "$MOUNT" -quiet 2>/dev/null || true' EXIT
 
-info "Resolving latest release of $REPO…"
+info "Resolving latest release of ${REPO}..."
 ASSET_URL=$(
     curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" \
         | grep -E '"browser_download_url".*\.dmg"' \
